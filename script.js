@@ -54,3 +54,33 @@ items.forEach((item) => {
 
     observer.observe(item);
 });
+
+// ---------- 3. Mobile hamburger menu ----------
+const menuToggle = document.querySelector(".menu-toggle");
+const navLinks = document.getElementById("nav-links");
+
+function setMenu(open) {
+    navLinks.classList.toggle("open", open);
+    menuToggle.setAttribute("aria-expanded", open);              // tells screen readers the state
+    menuToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+}
+
+// Open/close when the button is tapped
+menuToggle.addEventListener("click", () => {
+    setMenu(!navLinks.classList.contains("open"));
+});
+
+// Close after choosing a link, so the menu doesn't cover the section you jumped to
+navLinks.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => setMenu(false));
+});
+
+// Close with the Escape key
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") setMenu(false);
+});
+
+// Close when tapping anywhere outside the nav
+document.addEventListener("click", (e) => {
+    if (!e.target.closest("nav")) setMenu(false);
+});

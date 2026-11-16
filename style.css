@@ -49,6 +49,29 @@ nav a::after {
 }
 nav a:hover::after { width: 100%; }
 
+/* ---------- Hamburger button (hidden on desktop) ---------- */
+.menu-toggle {
+    display: none;
+    flex-direction: column; justify-content: center; gap: 5px;
+    width: 44px; height: 44px;          /* 44px = comfortable finger-sized tap target */
+    padding: 10px;
+    background: none; border: none; cursor: pointer;
+}
+.menu-toggle span {
+    display: block;
+    height: 2px; width: 100%;
+    background: #e6e6f0;
+    border-radius: 2px;
+    transition: transform 0.3s, opacity 0.3s;
+}
+/* When open, the three lines morph into an "X" */
+.menu-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.menu-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.menu-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Stop sections hiding underneath the fixed nav when you jump to them */
+section { scroll-margin-top: 80px; }
+
 /* ---------- Hero (top section) ---------- */
 .hero {
     min-height: 100vh;
@@ -100,7 +123,8 @@ section h2 { font-size: 2.2rem; margin-bottom: 40px; }
 
 .cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    /* min(220px, 100%) stops cards overflowing on very narrow phones */
+    grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
     gap: 25px;
 }
 .card {
@@ -136,4 +160,50 @@ footer { text-align: center; padding: 30px; color: #666; }
 .reveal.show {
     opacity: 1;
     translate: 0 0;
+}
+
+/* ---------- Touch screens: no "sticky" hover lift ---------- */
+@media (hover: none) {
+    .card:hover { transform: none; border-color: rgba(255, 255, 255, 0.1); }
+    .btn:hover  { transform: none; box-shadow: none; }
+}
+
+/* ---------- Tablets and phones (768px and below) ---------- */
+@media (max-width: 768px) {
+    nav { padding: 14px 6%; }
+
+    /* Show the hamburger */
+    .menu-toggle { display: flex; }
+
+    /* Turn the link row into a dropdown panel under the nav bar */
+    nav ul {
+        position: absolute; top: 100%; left: 0; right: 0;
+        flex-direction: column; align-items: center; gap: 0;
+        background: rgba(11, 11, 26, 0.95);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        /* Hidden by default; visibility also removes links from keyboard tab order */
+        opacity: 0; visibility: hidden; transform: translateY(-10px);
+        transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
+    }
+    nav ul.open { opacity: 1; visibility: visible; transform: translateY(0); }
+    nav li { width: 100%; text-align: center; }
+    nav ul a { display: block; padding: 16px; font-size: 1.1rem; }
+    nav ul a::after { display: none; }   /* underline effect doesn't suit a stacked menu */
+
+    /* Use 100svh so mobile browser toolbars don't push content off-screen */
+    .hero { min-height: 100svh; padding: 0 6%; }
+    .hero p { font-size: 1.05rem; }
+
+    section { padding: 70px 6%; }
+    section h2 { font-size: 1.8rem; margin-bottom: 28px; }
+    .card { padding: 24px; }
+
+    /* Smaller blobs: big blurred layers are expensive on phone GPUs */
+    .blob { width: 250px; height: 250px; filter: blur(70px); }
+}
+
+/* ---------- Small phones (480px and below) ---------- */
+@media (max-width: 480px) {
+    .btn { padding: 12px 28px; }
+    section h2 { font-size: 1.6rem; }
 }
