@@ -252,6 +252,19 @@ footer { text-align: center; padding: 30px; color: #666; }
     .photo-ring { width: 180px; }
     .hero p { font-size: 1.05rem; }
 
+    /* Mobile only: graduation photo as a faded "reflection" behind the hero */
+    .hero { position: relative; isolation: isolate; }
+    .hero::before {
+        content: '';
+        position: absolute; inset: 0;
+        z-index: -1;                                  /* behind the hero content */
+        background: url('images/bg-mobile.jpg') center 35% / cover no-repeat;
+        opacity: 0.35;                                /* faded, like a reflection */
+        filter: blur(2px) saturate(1.1);
+        -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 25%, #000 60%, transparent 100%);
+        mask-image: linear-gradient(to bottom, transparent 0%, #000 25%, #000 60%, transparent 100%);
+    }
+
     section { padding: 70px 6%; }
     section h2 { font-size: 1.8rem; margin-bottom: 28px; }
     .card { padding: 24px; }
