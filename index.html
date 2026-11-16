@@ -6,6 +6,15 @@
     <title>Isuru | Portfolio</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+
+    <!-- Apply the saved theme BEFORE the page draws, so there's no flash of the wrong colours -->
+    <script>
+        try {
+            const saved = localStorage.getItem("theme");
+            const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+            document.documentElement.dataset.theme = saved || (prefersLight ? "light" : "dark");
+        } catch (e) { /* storage blocked: just use the default dark theme */ }
+    </script>
 </head>
 <body>
     <!-- Glowing background shapes -->
@@ -15,16 +24,29 @@
     <nav>
         <span class="logo">Isuru.</span>
 
-        <!-- Hamburger button: only visible on small screens (see style.css) -->
-        <button class="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">
-            <span></span><span></span><span></span>
-        </button>
+        <div class="nav-right">
+            <ul id="nav-links">
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
 
-        <ul id="nav-links">
-            <li><a href="#skills">Skills</a></li>
-            <li><a href="#projects">Projects</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
+            <!-- Dark/light mode button: both icons are here, CSS shows the right one -->
+            <button class="theme-toggle" aria-label="Switch to light mode">
+                <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+                </svg>
+                <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+            </button>
+
+            <!-- Hamburger button: only visible on small screens (see style.css) -->
+            <button class="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
     </nav>
 
     <header class="hero">

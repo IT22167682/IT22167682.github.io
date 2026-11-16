@@ -84,3 +84,28 @@ document.addEventListener("keydown", (e) => {
 document.addEventListener("click", (e) => {
     if (!e.target.closest("nav")) setMenu(false);
 });
+
+
+// ---------- 4. Dark / light mode toggle ----------
+const themeToggle = document.querySelector(".theme-toggle");
+
+function updateThemeButton() {
+    const isLight = document.documentElement.dataset.theme === "light";
+    themeToggle.setAttribute("aria-label", isLight ? "Switch to dark mode" : "Switch to light mode");
+}
+
+themeToggle.addEventListener("click", () => {
+    // Read the current theme and flip it
+    const current = document.documentElement.dataset.theme;
+    const next = current === "light" ? "dark" : "light";
+
+    // Changing this attribute makes CSS swap every var(--...) colour at once
+    document.documentElement.dataset.theme = next;
+
+    // Remember the choice for next visit (localStorage survives closing the browser)
+    try { localStorage.setItem("theme", next); } catch (e) {}
+
+    updateThemeButton();
+});
+
+updateThemeButton();
