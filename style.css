@@ -1,0 +1,139 @@
+/* ---------- Basic reset ---------- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #0b0b1a;
+    color: #e6e6f0;
+    overflow-x: hidden;
+}
+
+/* ---------- Floating glowing blobs ---------- */
+.blob {
+    position: fixed;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.5;
+    z-index: -1;
+    animation: float 12s ease-in-out infinite;
+}
+.blob-1 { background: #ec4899; top: -100px; left: -100px; }
+.blob-2 { background: #06b6d4; bottom: -100px; right: -100px; animation-delay: -6s; }
+
+@keyframes float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50%      { transform: translate(80px, 60px) scale(1.2); }
+}
+
+/* ---------- Navigation (glass effect) ---------- */
+nav {
+    position: fixed; top: 0; width: 100%;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 8%;
+    background: rgba(11, 11, 26, 0.6);
+    backdrop-filter: blur(10px);
+    z-index: 10;
+}
+.logo { font-size: 1.5rem; font-weight: 700; }
+nav ul { display: flex; gap: 30px; list-style: none; }
+nav a { color: #e6e6f0; text-decoration: none; position: relative; }
+
+/* Underline that grows on hover */
+nav a::after {
+    content: '';
+    position: absolute; left: 0; bottom: -4px;
+    width: 0; height: 2px;
+    background: #06b6d4;
+    transition: width 0.3s;
+}
+nav a:hover::after { width: 100%; }
+
+/* ---------- Hero (top section) ---------- */
+.hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 0 8%;
+}
+.hero h1 { font-size: clamp(2.5rem, 7vw, 5rem); line-height: 1.1; }
+.hero p  { font-size: 1.2rem; color: #a0a0b8; margin: 20px 0 35px; }
+
+/* Each hero item fades up, one after another */
+.hero > * { opacity: 0; animation: fadeUp 0.8s ease forwards; }
+.hero > *:nth-child(2) { animation-delay: 0.3s; }
+.hero > *:nth-child(3) { animation-delay: 0.6s; }
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Shiny moving gradient text ---------- */
+.gradient {
+    background: linear-gradient(90deg, #ec4899, #06b6d4, #ec4899);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shine 4s linear infinite;
+}
+@keyframes shine { to { background-position: 200% center; } }
+
+/* ---------- Buttons ---------- */
+.btn {
+    align-self: flex-start;
+    display: inline-block;
+    padding: 14px 34px;
+    border-radius: 50px;
+    background: linear-gradient(90deg, #ec4899, #06b6d4);
+    color: #fff; text-decoration: none; font-weight: 500;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(124, 58, 237, 0.5);
+}
+
+/* ---------- Sections and cards ---------- */
+section { padding: 100px 8%; }
+section h2 { font-size: 2.2rem; margin-bottom: 40px; }
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 25px;
+}
+.card {
+    padding: 30px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s, border-color 0.3s;
+}
+.card:hover { transform: translateY(-10px); border-color: #06b6d4; }
+.card h3 { margin-bottom: 10px; }
+.card p  { color: #a0a0b8; }
+
+/* ---------- Contact and footer ---------- */
+#contact { text-align: center; }
+#contact p { color: #a0a0b8; margin-bottom: 30px; }
+footer { text-align: center; padding: 30px; color: #666; }
+
+/* ---------- Blinking typing cursor ---------- */
+.cursor {
+    color: #06b6d4;
+    animation: blink 0.8s step-end infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ---------- Scroll reveal ---------- */
+.reveal {
+    opacity: 0;
+    translate: 0 50px;
+    transition: opacity 0.8s ease, translate 0.8s ease, transform 0.3s, border-color 0.3s;
+}
+.reveal.show {
+    opacity: 1;
+    translate: 0 0;
+}
