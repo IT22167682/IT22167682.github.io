@@ -16,11 +16,15 @@ const suggestions  = document.querySelector(".chat-suggestions");
 // The conversation so far - sent to the Worker each time so the AI remembers context
 const history = [];
 
+// Phones/tablets: don't auto-focus the text box, because that pops up the keyboard
+// (and can zoom the page). Visitors tap the box themselves when ready to type.
+const isTouchScreen = window.matchMedia("(hover: none)").matches;
+
 // ---------- Open / close ----------
 function setChat(open) {
     chatPanel.classList.toggle("open", open);
     chatToggle.setAttribute("aria-expanded", open);
-    if (open) chatInput.focus();
+    if (open && !isTouchScreen) chatInput.focus();
 }
 chatToggle.addEventListener("click", () => setChat(!chatPanel.classList.contains("open")));
 chatClose.addEventListener("click", () => setChat(false));
@@ -73,7 +77,7 @@ async function ask(question) {
         history.pop();
     } finally {
         chatInput.disabled = false;
-        chatInput.focus();
+        if (!isTouchScreen) chatInput.focus();
     }
 }
 
