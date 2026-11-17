@@ -447,3 +447,28 @@ footer { text-align: center; padding: 30px; color: var(--footer); }
 
 /* Wider cards (3 per row on desktop) for Skills and Projects */
 .cards.wide { grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); }
+
+/* ---------- Desktop only: graduation photo as a faded "reflection" behind the hero ---------- */
+@media (min-width: 769px) {
+    .hero { position: relative; isolation: isolate; }
+    .hero::before {
+        content: '';
+        position: absolute; inset: 0;
+        z-index: -1;                                  /* behind the hero content */
+        /* Portrait photo: scale by height and pin it to the right,
+           so you stand between the text and the circle photo */
+        background: url('images/bg-desktop.jpg') right 85% / auto 150% no-repeat;
+        opacity: var(--hero-photo-opacity);           /* faded, like a reflection */
+        filter: blur(3px) saturate(1.1);
+        /* Two fades combined: left-to-right (keeps the text area clean)
+           and top/bottom (blends into the page) */
+        -webkit-mask-image:
+            linear-gradient(to right, transparent 40%, #000 65%),
+            linear-gradient(to bottom, transparent 0%, #000 20%, #000 70%, transparent 100%);
+        -webkit-mask-composite: source-in;
+        mask-image:
+            linear-gradient(to right, transparent 40%, #000 65%),
+            linear-gradient(to bottom, transparent 0%, #000 20%, #000 70%, transparent 100%);
+        mask-composite: intersect;
+    }
+}
