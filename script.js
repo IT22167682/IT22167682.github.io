@@ -1,5 +1,5 @@
 // ---------- 1. Typing effect ----------
-const words = ["websites.", "AI apps.", "smart tools.", "the future."];
+const words = ["secure cloud systems.", "automated pipelines.", "reliable networks.", "smart AI tools."];
 const typingEl = document.getElementById("typing");
 
 let wordIndex = 0;     // which word we are on
@@ -109,3 +109,31 @@ themeToggle.addEventListener("click", () => {
 });
 
 updateThemeButton();
+
+
+// ---------- 5. Count-up numbers in the About section ----------
+const counters = document.querySelectorAll(".stat-num");
+
+const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+
+        const el = entry.target;
+        const target = Number(el.dataset.target);   // from data-target="400"
+        const suffix = el.dataset.suffix || "";     // from data-suffix="+"
+        const duration = 1500;                      // milliseconds
+        const start = performance.now();
+
+        function tick(now) {
+            const progress = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);   // fast start, slow finish
+            el.textContent = Math.round(target * eased) + suffix;
+            if (progress < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+
+        counterObserver.unobserve(el);   // count only once
+    });
+}, { threshold: 0.6 });
+
+counters.forEach((counter) => counterObserver.observe(counter));
