@@ -227,10 +227,10 @@
                 <ul class="tags"><li>HTML</li><li>CSS</li><li>JavaScript</li></ul>
             </div>
             <div class="card project">
-                <span class="badge">Coming soon</span>
-                <h3>AI chatbot</h3>
-                <p>An AI assistant that answers visitors' questions about my experience and projects.</p>
-                <ul class="tags"><li>AI</li><li>LLM API</li></ul>
+                <span class="badge">Live &middot; try it</span>
+                <h3>"Ask about Isuru" AI chatbot</h3>
+                <p>An AI assistant on this site that answers questions about my experience. A Cloudflare Worker keeps the API key secret and sends each question to Google Gemini with a prompt built from my CV.</p>
+                <ul class="tags"><li>Gemini API</li><li>Cloudflare Workers</li><li>JavaScript</li><li>Prompt engineering</li></ul>
             </div>
         </div>
     </section>
@@ -262,7 +262,42 @@
     </section>
 
     <footer>© 2026 Isuru. Built with code and curiosity.</footer>
+    <!-- ===== AI CHATBOT ("Ask about Isuru") ===== -->
+    <button class="chat-toggle" aria-label="Chat with Isuru's AI assistant" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12z"/>
+        </svg>
+        <span>Ask AI</span>
+    </button>
+
+    <div class="chat-panel" role="dialog" aria-label="Chat with Isuru's AI assistant">
+        <div class="chat-header">
+            <div>
+                <strong>Ask about <span class="gradient">Isuru</span></strong>
+                <small>AI assistant · answers from my CV</small>
+            </div>
+            <button class="chat-close" aria-label="Close chat">&times;</button>
+        </div>
+        <div class="chat-messages" aria-live="polite">
+            <div class="msg msg-bot">Hi! I'm Isuru's AI assistant. Ask me anything about his experience, skills or projects.</div>
+        </div>
+        <div class="chat-suggestions">
+            <button type="button">What does Isuru do?</button>
+            <button type="button">Does he know Azure?</button>
+            <button type="button">What projects has he built?</button>
+        </div>
+        <form class="chat-form">
+            <input class="chat-input" type="text" placeholder="Type your question..." maxlength="500" autocomplete="off" aria-label="Your question">
+            <button type="submit" class="chat-send" aria-label="Send">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                </svg>
+            </button>
+        </form>
+    </div>
+
     <script src="script.js"></script>
+    <script src="chat.js"></script>
 </body>
 
 </html>
