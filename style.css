@@ -488,3 +488,8 @@ footer { text-align: center; padding: 30px; color: var(--footer); }
     }
     .hero .btn-icon svg { width: 15px; height: 15px; }
 }
+
+/* Mobile: push the hero buttons lower so they don't cover the face in the background photo */
+@media (max-width: 768px) {
+    .hero-buttons { margin-top: clamp(40px, 13svh, 120px); }   /* scales with screen height */
+}
