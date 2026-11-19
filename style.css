@@ -637,3 +637,29 @@ nav a.active::after { width: 100%; }          /* keep the gradient underline sho
     transform-origin: left;                        /* grow from the left edge */
     pointer-events: none;                          /* never blocks clicks */
 }
+
+/* ---------- Back-to-top button (bottom-left, so it doesn't clash with the chat button) ---------- */
+.back-to-top {
+    position: fixed; left: 24px; bottom: 24px;
+    z-index: 20;
+    width: 48px; height: 48px;
+    display: grid; place-items: center;
+    border-radius: 50%;
+    border: 1px solid var(--card-border);
+    background: var(--nav-bg-solid);
+    backdrop-filter: blur(10px);
+    color: var(--text);
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    /* hidden until you scroll down */
+    opacity: 0; visibility: hidden; transform: translateY(20px);
+    transition: opacity 0.3s, visibility 0.3s, transform 0.3s, border-color 0.3s, color 0.3s;
+}
+.back-to-top svg { width: 20px; height: 20px; transition: transform 0.3s; }
+.back-to-top.show { opacity: 1; visibility: visible; transform: translateY(0); }
+.back-to-top:hover { border-color: #06b6d4; color: #06b6d4; }
+.back-to-top:hover svg { transform: translateY(-3px); }   /* arrow nudges up */
+
+@media (max-width: 768px) {
+    .back-to-top { left: 16px; bottom: 16px; width: 44px; height: 44px; }
+}

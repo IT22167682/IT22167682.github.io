@@ -166,12 +166,16 @@ watchedSections.forEach((section) => sectionObserver.observe(section));
 
 // ---------- 7. Scroll progress bar ----------
 const progressBar = document.querySelector(".scroll-progress");
+const backToTop = document.querySelector(".back-to-top");
 let ticking = false;   // makes sure we update at most once per screen refresh
 
 function updateProgress() {
     const scrollable = document.documentElement.scrollHeight - window.innerHeight;  // how far you CAN scroll
     const progress = scrollable > 0 ? window.scrollY / scrollable : 0;              // 0 = top, 1 = bottom
     progressBar.style.transform = `scaleX(${progress})`;
+
+    // Back-to-top button: show it once you've scrolled down more than 600px
+    backToTop.classList.toggle("show", window.scrollY > 600);
     ticking = false;
 }
 
@@ -183,3 +187,9 @@ window.addEventListener("scroll", () => {
 }, { passive: true });
 window.addEventListener("resize", updateProgress);
 updateProgress();
+
+
+// ---------- 8. Back-to-top button ----------
+backToTop.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });   // glide back to the top
+});
