@@ -1,0 +1,10 @@
+{
+  "name": "DMARC: REJECT — Official Trailer",
+  "short_name": "DMARC: REJECT",
+  "start_url": "trailer.html",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": [{ "src": "images/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }]
+}

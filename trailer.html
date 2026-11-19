@@ -2,7 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- iPhone: when opened from the Home Screen, run full screen with no Safari bars -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DMARC: REJECT">
+<meta name="theme-color" content="#000000">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<link rel="manifest" href="trailer.webmanifest">
 <title>DMARC: REJECT — Official Trailer</title>
 <meta name="description" content="In a world where anyone can pretend to be anyone... one engineer and a cup of tea stand between the internet and chaos.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -122,7 +130,7 @@ html, body { height: 100%; background: #000; color: #eee; font-family: 'Poppins'
   box-shadow: 0 10px 40px rgba(236,72,153,0.45); transition: transform 0.3s; }
 .play:hover { transform: scale(1.06); }
 .hint { display: block; margin-top: 18px; font-size: 0.75rem; color: #555; }
-.controls { position: fixed; z-index: 6; bottom: 3.2vh; right: 3vw; display: flex; gap: 10px; opacity: 0; transition: opacity 0.5s; }
+.controls { position: fixed; z-index: 6; bottom: calc(3.2vh + env(safe-area-inset-bottom)); right: calc(3vw + env(safe-area-inset-right)); display: flex; gap: 10px; opacity: 0; transition: opacity 0.5s; }
 .controls.show { opacity: 1; }
 .controls button, .controls a { background: rgba(255,255,255,0.08); color: #ccc; border: 1px solid rgba(255,255,255,0.15);
   padding: 7px 14px; border-radius: 20px; cursor: pointer; font: 400 0.75rem 'Poppins'; text-decoration: none; }
@@ -143,7 +151,8 @@ html, body { height: 100%; background: #000; color: #eee; font-family: 'Poppins'
     <h1>DMARC: REJECT</h1>
     <p>Official Trailer · 90 seconds</p>
     <button class="play" id="play">▶&nbsp; Play trailer</button>
-    <span class="hint">🔊 Sound on for the full experience · Press <b>F</b> for full screen</span>
+    <span class="hint">🔊 Sound on for the full experience<span class="key-tip"> · Press <b>F</b> for full screen</span></span>
+    <span class="hint ios-tip" hidden>📱 For full screen on iPhone: open in <b>Safari</b> → tap <b>Share</b> → <b>Add to Home Screen</b>, then open it from the new icon.</span>
   </div>
 </div>
 
@@ -383,6 +392,12 @@ function exitFullscreen() {
 function updateFsButton() {
   fsButton.textContent = isFullscreen() ? "🗗 Exit full screen" : "⛶ Full screen";
 }
+
+// iPhone Safari can't make web pages full screen - show a tip instead (unless already opened from the Home Screen)
+const isIOS = /iPhone|iPod/.test(navigator.userAgent);
+const isStandalone = window.navigator.standalone === true || window.matchMedia("(display-mode: fullscreen), (display-mode: standalone)").matches;
+if (isIOS && !isStandalone) document.querySelector(".ios-tip").hidden = false;
+if (isIOS) document.querySelector(".key-tip").hidden = true;   // no keyboard on iPhone
 
 if (canFullscreen) {
   fsButton.hidden = false;                 // only show the button where full screen is supported
