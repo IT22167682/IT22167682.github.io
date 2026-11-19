@@ -143,11 +143,12 @@ html, body { height: 100%; background: #000; color: #eee; font-family: 'Poppins'
     <h1>DMARC: REJECT</h1>
     <p>Official Trailer · 90 seconds</p>
     <button class="play" id="play">▶&nbsp; Play trailer</button>
-    <span class="hint">🔊 Sound on for the full experience</span>
+    <span class="hint">🔊 Sound on for the full experience · Press <b>F</b> for full screen</span>
   </div>
 </div>
 
 <div class="controls" id="controls">
+  <button id="fullscreen" hidden>⛶ Full screen</button>
   <button id="replay">↺ Replay</button>
   <button id="skip">Skip ⏭</button>
   <a href="./">← Back to portfolio</a>
@@ -361,6 +362,40 @@ document.getElementById("play").addEventListener("click", () => {
   play();
 });
 document.getElementById("replay").addEventListener("click", () => play(0));
+
+// =====================================================
+//  Full screen (Fullscreen API) - hides the browser's address bar, tabs and taskbar
+// =====================================================
+const fsButton = document.getElementById("fullscreen");
+const root = document.documentElement;
+const canFullscreen = !!(root.requestFullscreen || root.webkitRequestFullscreen);
+const isFullscreen = () => !!(document.fullscreenElement || document.webkitFullscreenElement);
+
+function enterFullscreen() {
+  if (!canFullscreen || isFullscreen()) return;
+  const request = root.requestFullscreen || root.webkitRequestFullscreen;
+  try { const r = request.call(root); if (r && r.catch) r.catch(() => {}); } catch (e) {}
+}
+function exitFullscreen() {
+  const exit = document.exitFullscreen || document.webkitExitFullscreen;
+  if (exit && isFullscreen()) exit.call(document);
+}
+function updateFsButton() {
+  fsButton.textContent = isFullscreen() ? "🗗 Exit full screen" : "⛶ Full screen";
+}
+
+if (canFullscreen) {
+  fsButton.hidden = false;                 // only show the button where full screen is supported
+  fsButton.addEventListener("click", () => (isFullscreen() ? exitFullscreen() : enterFullscreen()));
+  document.addEventListener("fullscreenchange", updateFsButton);
+  document.addEventListener("webkitfullscreenchange", updateFsButton);
+  // Keyboard shortcut: F toggles full screen (Esc exits - the browser handles that)
+  document.addEventListener("keydown", (e) => {
+    if (e.key.toLowerCase() === "f" && !e.ctrlKey && !e.metaKey) isFullscreen() ? exitFullscreen() : enterFullscreen();
+  });
+  // Pressing Play also goes full screen automatically (browsers only allow it after a click)
+  document.getElementById("play").addEventListener("click", enterFullscreen);
+}
 document.getElementById("skip").addEventListener("click", () => play(scenes.length - 1));
 </script>
 </body>
