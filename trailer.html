@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DMARC: REJECT — Official Trailer</title>
+<meta name="description" content="In a world where anyone can pretend to be anyone... one engineer and a cup of tea stand between the internet and chaos.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:ital,wght@0,300;0,500;1,300&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; background: #000; color: #eee; font-family: 'Poppins', sans-serif; overflow: hidden; }
+
+/* ---------- Cinema frame ---------- */
+.screen { position: fixed; inset: 0; display: grid; place-items: center; background: #000; transition: background 2s; }
+.screen.sunrise { background: radial-gradient(ellipse at 50% 110%, #f59e0b 0%, #ec4899 30%, #3b0764 60%, #000 85%); }
+.screen.storm  { animation: lightning 5s infinite; }
+@keyframes lightning { 0%, 90%, 94%, 100% { background: #000; } 92% { background: #1e293b; } 93% { background: #000; } 95% { background: #334155; } }
+
+/* Black letterbox bars, like a real movie */
+.bar { position: fixed; left: 0; right: 0; height: 11vh; background: #000; z-index: 5; }
+.bar.top { top: 0; } .bar.bottom { bottom: 0; }
+
+/* Film grain + flicker */
+.grain { position: fixed; inset: -50%; z-index: 4; pointer-events: none; opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 0.5s steps(4) infinite; }
+@keyframes grain { 0% { transform: translate(0,0); } 25% { transform: translate(-5%,3%); } 50% { transform: translate(4%,-4%); } 75% { transform: translate(-3%,-2%); } }
+.vignette { position: fixed; inset: 0; z-index: 3; pointer-events: none; background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.85) 100%); }
+
+/* ---------- Background photos with slow zoom & pan ("Ken Burns" effect) ---------- */
+.photo { position: absolute; inset: 0; z-index: 1; background-size: cover; background-repeat: no-repeat;
+  opacity: 0; transition: opacity 1.4s ease;
+  filter: brightness(0.8) saturate(1.05) contrast(1.05);          /* darker + moodier, so text stays readable */
+  animation-timing-function: linear; animation-fill-mode: both; }
+.photo.show { opacity: var(--o, 0.8); }
+@keyframes kb-in    { from { transform: scale(1.05); } to { transform: scale(1.28); } }
+@keyframes kb-out   { from { transform: scale(1.28); } to { transform: scale(1.05); } }
+@keyframes kb-left  { from { transform: scale(1.2) translateX(4%); }  to { transform: scale(1.2) translateX(-4%); } }
+@keyframes kb-right { from { transform: scale(1.2) translateX(-4%); } to { transform: scale(1.2) translateX(4%); } }
+@keyframes kb-up    { from { transform: scale(1.2) translateY(4%); }  to { transform: scale(1.2) translateY(-4%); } }
+/* Dark gradient over the photo so text pops */
+.photo::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(0,0,0,0.25), rgba(0,0,0,0.65)); }
+.stage { text-shadow: 0 2px 24px rgba(0,0,0,0.9); }
+
+/* ---------- Scenes ---------- */
+.stage { position: relative; width: min(900px, 90vw); text-align: center; z-index: 2; }
+.scene { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%) scale(0.97);
+  opacity: 0; filter: blur(8px); transition: opacity 0.9s, transform 3.5s ease-out, filter 0.9s; }
+.scene.in  { opacity: 1; transform: translateY(-50%) scale(1.03); filter: blur(0); }
+.scene.out { opacity: 0; filter: blur(6px); transition: opacity 0.6s, filter 0.6s; }
+
+.narrator { font: italic 300 clamp(1.4rem, 3.6vw, 2.6rem)/1.4 'Poppins'; color: #f1f1f1; letter-spacing: 0.02em; }
+.narrator .who { display: block; font: 500 0.75rem 'Poppins'; letter-spacing: 0.4em; color: #888; margin-bottom: 18px; font-style: normal; }
+.action { font: 300 clamp(0.95rem, 2vw, 1.25rem)/1.7 'Poppins'; color: #9ca3af; letter-spacing: 0.08em; text-transform: uppercase; }
+.dialogue .speaker { display: block; font: 500 0.8rem 'Poppins'; letter-spacing: 0.35em; color: #06b6d4; margin-bottom: 14px; }
+.dialogue .speaker.villain { color: #ef4444; }
+.dialogue .speaker.boss { color: #f59e0b; }
+.dialogue .line { font: 500 clamp(1.5rem, 4vw, 3rem)/1.3 'Poppins'; }
+.dialogue .whisper { font-style: italic; font-weight: 300; color: #cbd5e1; }
+.big { font: clamp(3rem, 10vw, 7rem)/1 'Bebas Neue', Impact, 'Arial Narrow', sans-serif; letter-spacing: 0.06em; }
+.small-caps { font: 500 0.85rem 'Poppins'; letter-spacing: 0.5em; color: #888; text-transform: uppercase; }
+
+/* Terminal / DNS editor */
+.terminal { display: inline-block; text-align: left; background: #0b1120; border: 1px solid #1f2937; border-radius: 10px;
+  padding: 22px 28px; font: 400 clamp(0.95rem, 2.4vw, 1.5rem)/1.6 'JetBrains Mono', monospace; color: #e5e7eb;
+  box-shadow: 0 0 60px rgba(6,182,212,0.25); }
+.terminal .dots { margin-bottom: 12px; } .terminal .dots i { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 6px; }
+.terminal .prompt { color: #64748b; }
+.terminal .k { color: #06b6d4; } .terminal .v { color: #f472b6; font-weight: 700; }
+.terminal.red { box-shadow: 0 0 80px rgba(239,68,68,0.45); border-color: #7f1d1d; color: #fca5a5; }
+.caret::after { content: '▌'; animation: blink 0.7s steps(1) infinite; color: #06b6d4; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* Tea cup with steam */
+.tea { font-size: clamp(5rem, 14vw, 9rem); position: relative; display: inline-block; }
+.steam { position: absolute; left: 50%; top: -10%; width: 60%; transform: translateX(-50%); }
+.steam span { position: absolute; bottom: 0; width: 8px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.35);
+  filter: blur(6px); animation: steam 3s ease-in infinite; }
+.steam span:nth-child(1) { left: 20%; } .steam span:nth-child(2) { left: 48%; animation-delay: 1s; } .steam span:nth-child(3) { left: 75%; animation-delay: 2s; }
+@keyframes steam { 0% { transform: translateY(0) scaleX(1); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateY(-110px) scaleX(2.5); opacity: 0; } }
+
+/* Montage list */
+.montage { display: grid; gap: 10px; font: 500 clamp(1rem, 2.6vw, 1.6rem) 'Poppins'; }
+.montage div { opacity: 0; transform: translateX(-30px); animation: slam 0.35s forwards; }
+@keyframes slam { to { opacity: 1; transform: none; } }
+
+/* Shake effect for impacts */
+.shake { animation: shake 0.5s; }
+@keyframes shake { 10%, 90% { transform: translate(-2px, 1px); } 20%, 80% { transform: translate(4px, -2px); } 30%, 50%, 70% { transform: translate(-6px, 3px); } 40%, 60% { transform: translate(6px, -3px); } }
+
+/* Chat ping */
+.ping { display: inline-block; text-align: left; max-width: 520px; padding: 16px 22px; border-radius: 18px 18px 18px 4px;
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(10px);
+  font: 400 clamp(1rem, 2.4vw, 1.4rem)/1.5 'Poppins'; }
+.ping b { display: block; font-size: 0.7rem; letter-spacing: 0.3em; color: #06b6d4; margin-bottom: 6px; }
+
+/* Final title card */
+.title-card .big { font-size: clamp(4rem, 15vw, 10rem);
+  background: linear-gradient(90deg, #ec4899, #06b6d4, #ec4899); background-size: 200% auto;
+  -webkit-background-clip: text; background-clip: text; color: transparent; animation: shine 3s linear infinite;
+  filter: drop-shadow(0 0 30px rgba(236,72,153,0.5)); }
+@keyframes shine { to { background-position: 200% center; } }
+.tagline { margin-top: 10px; font: 300 clamp(1rem, 2.4vw, 1.4rem) 'Poppins'; letter-spacing: 0.15em; }
+.credits { margin-top: 34px; font: 300 clamp(0.75rem, 1.6vw, 0.95rem)/2 'Poppins'; color: #aaa; letter-spacing: 0.12em; text-transform: uppercase; }
+.credits strong { color: #fff; font-weight: 500; }
+.rating { display: inline-flex; align-items: center; gap: 12px; margin-top: 26px; text-align: left; font-size: 0.7rem; color: #aaa; }
+.rating span { border: 2px solid #aaa; padding: 4px 8px; font: 1.2rem 'Bebas Neue', Impact, sans-serif; color: #fff; }
+
+/* ---------- Start screen & controls ---------- */
+.start { position: fixed; inset: 0; z-index: 10; display: grid; place-items: center; text-align: center; background: #000; transition: opacity 0.8s; }
+.start.hide { opacity: 0; pointer-events: none; }
+.start .small-caps { display: block; margin-bottom: 16px; }
+.start h1 { font: clamp(3rem, 11vw, 8rem)/1 'Bebas Neue', Impact, 'Arial Narrow', sans-serif; letter-spacing: 0.06em; }
+.start p { color: #888; margin: 12px 0 34px; font-weight: 300; }
+.play { display: inline-flex; align-items: center; gap: 12px; padding: 16px 38px; border: none; border-radius: 50px; cursor: pointer;
+  font: 500 1rem 'Poppins'; color: #fff; background: linear-gradient(90deg, #ec4899, #06b6d4);
+  box-shadow: 0 10px 40px rgba(236,72,153,0.45); transition: transform 0.3s; }
+.play:hover { transform: scale(1.06); }
+.hint { display: block; margin-top: 18px; font-size: 0.75rem; color: #555; }
+.controls { position: fixed; z-index: 6; bottom: 3.2vh; right: 3vw; display: flex; gap: 10px; opacity: 0; transition: opacity 0.5s; }
+.controls.show { opacity: 1; }
+.controls button, .controls a { background: rgba(255,255,255,0.08); color: #ccc; border: 1px solid rgba(255,255,255,0.15);
+  padding: 7px 14px; border-radius: 20px; cursor: pointer; font: 400 0.75rem 'Poppins'; text-decoration: none; }
+.controls button:hover, .controls a:hover { background: rgba(255,255,255,0.18); color: #fff; }
+.progress { position: fixed; z-index: 6; left: 0; bottom: 0; height: 3px; width: 0; background: linear-gradient(90deg, #ec4899, #06b6d4); transition: width 0.4s linear; }
+</style>
+</head>
+<body>
+
+<div class="screen" id="screen"><div class="stage" id="stage"></div></div>
+<div class="vignette"></div><div class="grain"></div>
+<div class="bar top"></div><div class="bar bottom"></div>
+<div class="progress" id="progress"></div>
+
+<div class="start" id="start">
+  <div>
+    <span class="small-caps">An Isuru Dissanayaka Production</span>
+    <h1>DMARC: REJECT</h1>
+    <p>Official Trailer · 90 seconds</p>
+    <button class="play" id="play">▶&nbsp; Play trailer</button>
+    <span class="hint">🔊 Sound on for the full experience</span>
+  </div>
+</div>
+
+<div class="controls" id="controls">
+  <button id="replay">↺ Replay</button>
+  <button id="skip">Skip ⏭</button>
+  <a href="./">← Back to portfolio</a>
+</div>
+
+<script>
+// =====================================================
+//  Sound effects - made with code (Web Audio), no files
+// =====================================================
+let audio;
+function boom(freq = 55, length = 1.6, volume = 0.9) {          // deep cinematic "BWAAM"
+  if (!audio) return;
+  const t = audio.currentTime, osc = audio.createOscillator(), gain = audio.createGain();
+  osc.type = "sine"; osc.frequency.setValueAtTime(freq * 2, t); osc.frequency.exponentialRampToValueAtTime(freq, t + 0.3);
+  gain.gain.setValueAtTime(volume, t); gain.gain.exponentialRampToValueAtTime(0.001, t + length);
+  osc.connect(gain).connect(audio.destination); osc.start(t); osc.stop(t + length);
+}
+function noise(length = 2, volume = 0.5, cutoff = 600) {         // thunder / whoosh
+  if (!audio) return;
+  const t = audio.currentTime, buffer = audio.createBuffer(1, audio.sampleRate * length, audio.sampleRate), data = buffer.getChannelData(0);
+  for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+  const src = audio.createBufferSource(), filter = audio.createBiquadFilter(), gain = audio.createGain();
+  filter.type = "lowpass"; filter.frequency.value = cutoff; gain.gain.value = volume;
+  src.buffer = buffer; src.connect(filter).connect(gain).connect(audio.destination); src.start(t);
+}
+function ping() {                                                // chat notification
+  if (!audio) return;
+  [880, 1320].forEach((f, i) => {
+    const t = audio.currentTime + i * 0.12, o = audio.createOscillator(), g = audio.createGain();
+    o.frequency.value = f; g.gain.setValueAtTime(0.25, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+    o.connect(g).connect(audio.destination); o.start(t); o.stop(t + 0.4);
+  });
+}
+function tick() { boom(220, 0.15, 0.25); }                        // typing click
+
+// =====================================================
+//  The trailer script: each scene = what to show + how long
+// =====================================================
+const N = (text) => `<p class="narrator"><span class="who">NARRATOR</span>${text}</p>`;
+const A = (text) => `<p class="action">${text}</p>`;
+const D = (speaker, line, cls = "") => `<div class="dialogue"><span class="speaker ${cls}">${speaker}</span><p class="line">${line}</p></div>`;
+const tea = `<div class="tea">🍵<div class="steam"><span></span><span></span><span></span></div></div>`;
+
+const scenes = [
+  { html: A("Black screen.<br>A single kettle begins to boil."), d: 3200, sound: () => noise(3, 0.15, 300) },
+  { html: N("In a world…<br>where anyone can pretend to be anyone…"), d: 4200, sound: () => boom() },
+  { html: `<div class="terminal red"><div class="dots"><i style="background:#ef4444"></i><i style="background:#f59e0b"></i><i style="background:#22c55e"></i></div>
+           📧 From: CEO &lt;ceo@yourcompany.com&gt;<br>Subject: <b>URGENT INVOICE – PAY NOW</b></div>`, d: 3600, sound: () => boom(45) },
+  { html: N("…where emails lie…<br>and invoices are fake…"), d: 4000 },
+  { html: A("Malabe. 2:47 AM.<br>Rain on the window.<br>A laptop lights up a determined face."), d: 4200, storm: true, sound: () => noise(2.5, 0.6, 400) },
+  { html: N("…one man…<br>stood between the internet<br>and total chaos."), d: 4500, sound: () => boom(40, 2.5) },
+  { html: tea + A("<br>Slow motion. Steam rises.<br>Thunder crashes for no reason."), d: 4200, shake: true, sound: () => { noise(3, 0.9, 250); boom(35, 2.5); } },
+  { html: D("ISURU", '<span class="whisper">"They spoofed the wrong domain."</span>'), d: 3800 },
+  { html: D("MANAGER", '"Isuru! Someone\'s emailing as our CEO!<br>They want <u>gift cards</u>!"', "boss"), d: 4200 },
+  { html: D("ISURU", '<span class="whisper">"Gift cards…<br>always gift cards."</span>'), d: 3600 },
+  { html: A("He sips his tea.<br>Calmly.<br><b>Too</b> calmly."), d: 3400 },
+  { html: N("SPF… was not enough."), d: 2600, sound: () => boom(60, 1) },
+  { html: N("DKIM… was not enough."), d: 2600, sound: () => boom(50, 1) },
+  { html: N("It was time…<br>for something <b>stronger</b>."), d: 3400, sound: () => boom(40, 2) },
+  { type: "dns", d: 7500 },
+  { html: A("Somewhere in the world…<br>a single tear rolls down a spammer's face."), d: 3800 },
+  { html: D("THE VILLAIN", '"Impossible… my emails…<br>they\'re all bouncing!"', "villain"), d: 3800, storm: true },
+  { html: `<div class="terminal red">550 5.7.1 Message rejected<br>due to DMARC policy ❌<br>550 5.7.1 Message rejected<br>due to DMARC policy ❌<br>550 5.7.1 Message rejected…</div>`, d: 3400, shake: true, sound: () => { boom(40, 1.5); noise(1, 0.5, 900); } },
+  { html: D("THE VILLAIN", '"WHO… IS… THIS… MAN?!"', "villain"), d: 3200, shake: true, sound: () => boom(35, 2) },
+  { html: `<div class="terminal">📊 parsedmarc report<br><span class="prompt">failed alignment:</span> <span class="v">47</span><br><span class="prompt">source:</span> <span class="k">somewhere.very.suspicious</span></div>`, d: 3600 },
+  { html: D("ISURU", '<span class="whisper">"Found you."</span>'), d: 2800, sound: () => boom(70, 0.8, 0.6) },
+  { html: A("He reaches for his tea…<br><br>…the cup is <b>empty</b>."), d: 3800 },
+  { html: D("ISURU", '<span class="whisper">"…No."</span>'), d: 3000, silence: true },
+  { type: "montage", d: 5200 },
+  { html: N("This winter…<br>he's not just patching servers…"), d: 3800, sound: () => boom() },
+  { html: N("He's patching…<br><b>the soul of the internet.</b>"), d: 4200, sound: () => boom(35, 3) },
+  { html: `<div class="ping"><b>AI CHATBOT</b>Isuru, a new phishing campaign has been detected.</div>`, d: 3400, sunrise: true, sound: ping },
+  { html: tea + D("ISURU", '"Then let\'s go to work."'), d: 4200, sunrise: true },
+  { type: "title", d: 999999, sunrise: true, sound: () => { boom(30, 4); noise(4, 0.7, 200); } },
+];
+
+// =====================================================
+//  Cartoon picture for each scene (scene number -> image)
+//  pos = where the main subject is (used for mobile framing + zoom target)
+//  kb  = camera move: in, out, left, right, up
+// =====================================================
+const SCENE_PHOTOS = {
+  1:  { photo: "01-email-wall.jpg",    pos: "50% 60%", kb: "in" },     // In a world...
+  2:  { photo: "02-villain.jpg",       pos: "40% 45%", kb: "in" },     // fake CEO email
+  3:  { photo: "02-villain.jpg",       pos: "40% 45%", kb: "in" },     // ...emails lie (same shot keeps moving)
+  4:  { photo: "03-desk-rain.jpg",     pos: "62% 35%", kb: "right", o: 0.9 }, // Malabe, 2:47 AM
+  5:  { photo: "01-email-wall.jpg",    pos: "50% 65%", kb: "out" },    // ...one man...
+  6:  { photo: "04-tea-sip.jpg",       pos: "55% 50%", kb: "in", o: 0.9 },    // slow-motion tea
+  7:  { photo: "05-close-up.jpg",      pos: "55% 45%", kb: "in", o: 0.9 },    // They spoofed the wrong domain
+  8:  { photo: "06-manager.jpg",       pos: "20% 45%", kb: "right" },  // panicking manager
+  9:  { photo: "06-manager.jpg",       pos: "70% 40%", kb: "in" },     // Gift cards... always gift cards
+  10: { photo: "04-tea-sip.jpg",       pos: "55% 50%", kb: "out" },    // sips his tea, calmly
+  14: { photo: "07-reject.jpg",        pos: "45% 50%", kb: "in", o: 0.6 },    // p=reject!
+  15: { photo: "08-villain-cries.jpg", pos: "25% 45%", kb: "in" },     // a tear rolls...
+  16: { photo: "08-villain-cries.jpg", pos: "25% 45%", kb: "in" },
+  17: { photo: "08-villain-cries.jpg", pos: "25% 45%", kb: "in" },
+  18: { photo: "08-villain-cries.jpg", pos: "25% 45%", kb: "in" },     // WHO IS THIS MAN?!
+  20: { photo: "05-close-up.jpg",      pos: "55% 45%", kb: "out", o: 0.9 },   // Found you.
+  21: { photo: "09-empty-cup.jpg",     pos: "45% 50%", kb: "in", o: 0.9 },    // the cup is empty
+  22: { photo: "09-empty-cup.jpg",     pos: "45% 50%", kb: "in", o: 0.9 },    // ...No.
+  23: { photo: "03-desk-rain.jpg",     pos: "62% 35%", kb: "left", o: 0.55 }, // montage
+  24: { photo: "01-email-wall.jpg",    pos: "50% 60%", kb: "in" },     // This winter...
+  25: { photo: "01-email-wall.jpg",    pos: "50% 60%", kb: "in" },     // ...the soul of the internet
+  26: { photo: "10-rooftop.jpg",       pos: "52% 15%", kb: "in", o: 0.75 },   // AI chatbot ping
+  27: { photo: "10-rooftop.jpg",       pos: "52% 15%", kb: "in", o: 0.75 },   // Then let's go to work
+  28: { photo: "11-poster.jpg",        pos: "50% 40%", kb: "out", o: 0.5 },   // title card
+};
+Object.entries(SCENE_PHOTOS).forEach(([i, p]) => Object.assign(scenes[i], p));
+
+// =====================================================
+//  The player
+// =====================================================
+const stage = document.getElementById("stage"), screenEl = document.getElementById("screen");
+
+// ---------- Background photo layer ----------
+const PHOTO_DIR = "images/trailer/cartoon/";
+let currentPhoto = null, currentKey = "";
+function setPhoto(s) {
+  const key = s.photo ? s.photo + s.pos + s.kb : "";
+  if (key === currentKey) return;               // same shot continues - keep zooming smoothly
+  currentKey = key;
+  if (currentPhoto) {                            // fade the old photo out
+    const old = currentPhoto;
+    old.classList.remove("show");
+    setTimeout(() => old.remove(), 1500);
+    currentPhoto = null;
+  }
+  if (!s.photo) return;
+  const layer = document.createElement("div");
+  layer.className = "photo";
+  layer.style.backgroundImage = `url("${PHOTO_DIR}${s.photo}")`;
+  layer.style.backgroundPosition = s.pos || "center";
+  layer.style.transformOrigin = s.pos || "center";      // zoom towards the face
+  layer.style.setProperty("--o", s.o || 0.6);
+  layer.style.animationName = `kb-${s.kb || "in"}`;
+  layer.style.animationDuration = `${Math.min(s.d, 12000) + 1800}ms`;
+  screenEl.prepend(layer);
+  requestAnimationFrame(() => requestAnimationFrame(() => layer.classList.add("show")));
+  currentPhoto = layer;
+}
+function preloadPhotos() {
+  scenes.filter((s) => s.photo).forEach((s) => { const img = new Image(); img.src = PHOTO_DIR + s.photo; });
+}
+const progress = document.getElementById("progress"), controls = document.getElementById("controls");
+let runId = 0;                                   // changes when we replay/skip, so old timers stop
+const wait = (ms, id) => new Promise((res) => setTimeout(() => res(id === runId), ms));
+
+function sceneHTML(s) {
+  if (s.type === "dns") return `<div class="terminal"><div class="dots"><i style="background:#ef4444"></i><i style="background:#f59e0b"></i><i style="background:#22c55e"></i></div>
+      <span class="prompt">_dmarc.yourcompany.com TXT</span><br><span class="k">v=DMARC1;</span> <span class="k">p=</span><span class="v" id="policy">none</span><span class="caret"></span></div>`;
+  if (s.type === "montage") return `<div class="montage">${["⌨️ Fingers flying", "🛡️ Intune policies deployed", "🔐 MFA prompts everywhere", "🔥 Firewall rule saves the day", "🍵 Kettle on. Again."]
+      .map((t, i) => `<div style="animation-delay:${i * 0.9}s">${t}</div>`).join("")}</div>`;
+  if (s.type === "title") return `<div class="title-card"><div class="big">DMARC: REJECT</div>
+      <p class="tagline">No spoofing. No mercy. No milk shortage.</p>
+      <div class="credits">Starring <strong>Isuru</strong> as <em>The Engineer</em><br>
+      Also starring <strong>A Cup of Ceylon Tea</strong> as <em>Itself</em><br>
+      Featuring Grafana · Microsoft Entra ID · A Very Tired Router<br><br>
+      <strong>Coming soon to an inbox near you</strong></div>
+      <div class="rating"><span>PG-13</span>Intense DNS editing and scenes<br>of extreme tea consumption</div></div>`;
+  return s.html;
+}
+
+// The DNS scene: delete "none" letter by letter, then type "reject"
+async function playDNS(id) {
+  const el = document.getElementById("policy");
+  await wait(1500, id);
+  for (let i = 4; i >= 0; i--) { if (id !== runId) return; el.textContent = "none".slice(0, i); tick(); await wait(260, id); }
+  await wait(600, id);
+  for (const ch of "reject") { if (id !== runId) return; el.textContent += ch; tick(); await wait(220, id); }
+  await wait(500, id);
+  if (id !== runId) return;
+  boom(35, 3); noise(2, 0.6, 500);
+  screenEl.classList.add("shake"); setTimeout(() => screenEl.classList.remove("shake"), 500);
+}
+
+async function play(startAt = 0) {
+  const id = ++runId;
+  stage.innerHTML = ""; screenEl.className = "screen";
+  screenEl.querySelectorAll(".photo").forEach((p) => p.remove());
+  currentPhoto = null; currentKey = "";
+  for (let i = startAt; i < scenes.length; i++) {
+    const s = scenes[i];
+    progress.style.width = `${(i / (scenes.length - 1)) * 100}%`;
+    screenEl.classList.toggle("storm", !!s.storm);
+    screenEl.classList.toggle("sunrise", !!s.sunrise);
+    setPhoto(s);
+
+    const el = document.createElement("div");
+    el.className = "scene";
+    el.innerHTML = sceneHTML(s);
+    stage.appendChild(el);
+    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add("in")));
+    if (s.sound) s.sound();
+    if (s.shake) { screenEl.classList.add("shake"); setTimeout(() => screenEl.classList.remove("shake"), 500); }
+    if (s.type === "dns") playDNS(id);
+
+    if (s.type === "title") return;            // stay on the final card
+    if (!(await wait(s.d, id))) return;        // stopped (replay / skip)
+    el.classList.add("out");
+    if (!(await wait(s.silence ? 1400 : 650, id))) return;
+    el.remove();
+  }
+}
+
+document.getElementById("play").addEventListener("click", () => {
+  try { audio = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
+  preloadPhotos();
+  document.getElementById("start").classList.add("hide");
+  controls.classList.add("show");
+  play();
+});
+document.getElementById("replay").addEventListener("click", () => play(0));
+document.getElementById("skip").addEventListener("click", () => play(scenes.length - 1));
+</script>
+</body>
+</html>
