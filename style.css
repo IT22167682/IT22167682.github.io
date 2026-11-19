@@ -690,3 +690,34 @@ nav a.active::after { width: 100%; }          /* keep the gradient underline sho
         mask-composite: intersect;
     }
 }
+
+/* ---------- 3D tilt cards (script.js adds the "tilt" class + the --rx/--ry values) ---------- */
+.card.tilt {
+    position: relative;
+    overflow: hidden;
+    /* perspective = how "deep" the 3D looks (smaller number = stronger 3D effect) */
+    transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+}
+.card.tilt:hover {
+    transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-8px);
+}
+/* Faster transform transition so the tilt follows the mouse closely
+   (same 4-item list as .reveal, so the scroll-in delays still line up) */
+.card.tilt.reveal {
+    transition: opacity 0.8s ease, translate 0.8s ease, transform 0.15s ease-out, border-color 0.3s;
+}
+
+/* Shine that follows the mouse */
+.card.tilt::after {
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.12), transparent 55%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+.card.tilt:hover::after { opacity: 1; }
+[data-theme="light"] .card.tilt::after {
+    background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(6, 182, 212, 0.12), transparent 55%);
+}

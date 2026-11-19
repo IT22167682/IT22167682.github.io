@@ -193,3 +193,35 @@ updateProgress();
 backToTop.addEventListener("click", () => {
     window.scrollTo({ top: 0, behavior: "smooth" });   // glide back to the top
 });
+
+
+// ---------- 9. 3D tilt on skill and project cards ----------
+// Only for devices with a real mouse, and not for people who prefer less motion
+const canTilt = window.matchMedia("(hover: hover) and (pointer: fine)").matches
+             && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+if (canTilt) {
+    const MAX_TILT = 6;   // degrees - how far a card can lean
+
+    document.querySelectorAll("#skills .card, #projects .card").forEach((card) => {
+        card.classList.add("tilt");
+
+        card.addEventListener("mousemove", (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width;    // 0 = left edge, 1 = right edge
+            const y = (e.clientY - rect.top) / rect.height;    // 0 = top edge,  1 = bottom edge
+
+            // Mouse on the right -> card turns right (rotateY); mouse at the top -> card leans back (rotateX)
+            card.style.setProperty("--ry", `${(x - 0.5) * 2 * MAX_TILT}deg`);
+            card.style.setProperty("--rx", `${(0.5 - y) * 2 * MAX_TILT}deg`);
+            // Where the shine sits (follows the mouse)
+            card.style.setProperty("--mx", `${x * 100}%`);
+            card.style.setProperty("--my", `${y * 100}%`);
+        });
+
+        card.addEventListener("mouseleave", () => {
+            card.style.setProperty("--rx", "0deg");   // settle back flat
+            card.style.setProperty("--ry", "0deg");
+        });
+    });
+}
