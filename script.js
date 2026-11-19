@@ -162,3 +162,24 @@ const sectionObserver = new IntersectionObserver((entries) => {
 });
 
 watchedSections.forEach((section) => sectionObserver.observe(section));
+
+
+// ---------- 7. Scroll progress bar ----------
+const progressBar = document.querySelector(".scroll-progress");
+let ticking = false;   // makes sure we update at most once per screen refresh
+
+function updateProgress() {
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;  // how far you CAN scroll
+    const progress = scrollable > 0 ? window.scrollY / scrollable : 0;              // 0 = top, 1 = bottom
+    progressBar.style.transform = `scaleX(${progress})`;
+    ticking = false;
+}
+
+window.addEventListener("scroll", () => {
+    if (!ticking) {
+        requestAnimationFrame(updateProgress);   // wait for the next frame = smooth + efficient
+        ticking = true;
+    }
+}, { passive: true });
+window.addEventListener("resize", updateProgress);
+updateProgress();
