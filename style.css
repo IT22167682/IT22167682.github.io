@@ -616,3 +616,12 @@ footer { text-align: center; padding: 30px; color: var(--footer); }
     /* iPhones zoom into any text box smaller than 16px - 16px stops that zoom */
     .chat-input { font-size: 16px; }
 }
+
+/* ---------- Active menu item (set by script.js while you scroll) ---------- */
+nav a { transition: color 0.3s; }
+nav a.active { color: #06b6d4; }
+nav a.active::after { width: 100%; }          /* keep the gradient underline showing */
+@media (max-width: 768px) {
+    /* In the mobile dropdown: a soft highlighted row instead of an underline */
+    nav ul a.active { background: rgba(6, 182, 212, 0.1); }
+}

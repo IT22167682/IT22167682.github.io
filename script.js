@@ -137,3 +137,28 @@ const counterObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.6 });
 
 counters.forEach((counter) => counterObserver.observe(counter));
+
+
+// ---------- 6. Highlight the menu item for the section you're viewing ----------
+const navItems = document.querySelectorAll("#nav-links a");
+// Watch every section with an id, plus the hero (no id -> clears the highlight at the top)
+const watchedSections = document.querySelectorAll("section[id], header.hero");
+
+const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const id = entry.target.id;                       // e.g. "skills" ("" for the hero)
+        navItems.forEach((link) => {
+            const isCurrent = link.getAttribute("href") === `#${id}`;
+            link.classList.toggle("active", isCurrent);
+            // Tell screen readers which item is current
+            if (isCurrent) link.setAttribute("aria-current", "true");
+            else link.removeAttribute("aria-current");
+        });
+    });
+}, {
+    // Only count a section as "current" when it crosses the middle of the screen
+    rootMargin: "-45% 0px -50% 0px",
+});
+
+watchedSections.forEach((section) => sectionObserver.observe(section));
