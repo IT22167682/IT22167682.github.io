@@ -149,7 +149,7 @@ html, body { height: 100%; background: #000; color: #eee; font-family: 'Poppins'
   <div>
     <span class="small-caps">An Isuru Dissanayaka Production</span>
     <h1>DMARC: REJECT</h1>
-    <p>Official Trailer · 90 seconds</p>
+    <p>Official Trailer · 1 minute</p>
     <button class="play" id="play">▶&nbsp; Play trailer</button>
     <span class="hint">🔊 Sound on for the full experience<span class="key-tip"> · Press <b>F</b> for full screen</span></span>
     <span class="hint ios-tip" hidden>📱 For full screen on iPhone: open in <b>Safari</b> → tap <b>Share</b> → <b>Add to Home Screen</b>, then open it from the new icon.</span>
@@ -207,7 +207,7 @@ const scenes = [
   { html: `<div class="terminal red"><div class="dots"><i style="background:#ef4444"></i><i style="background:#f59e0b"></i><i style="background:#22c55e"></i></div>
            📧 From: CEO &lt;ceo@yourcompany.com&gt;<br>Subject: <b>URGENT INVOICE – PAY NOW</b></div>`, d: 3600, sound: () => boom(45) },
   { html: N("…where emails lie…<br>and invoices are fake…"), d: 4000 },
-  { html: A("Malabe. 2:47 AM.<br>Rain on the window.<br>A laptop lights up a determined face."), d: 4200, storm: true, sound: () => noise(2.5, 0.6, 400) },
+  { html: A("Colombo. 2:47 AM.<br>Rain on the window.<br>A laptop lights up a determined face."), d: 4200, storm: true, sound: () => noise(2.5, 0.6, 400) },
   { html: N("…one man…<br>stood between the internet<br>and total chaos."), d: 4500, sound: () => boom(40, 2.5) },
   { html: A("Slow motion. Steam rises.<br>Thunder crashes for no reason."), d: 4200, shake: true, sound: () => { noise(3, 0.9, 250); boom(35, 2.5); } },
   { html: D("ISURU", '<span class="whisper">"They spoofed the wrong domain."</span>'), d: 3800 },
@@ -243,7 +243,7 @@ const SCENE_PHOTOS = {
   1:  { photo: "01-email-wall.jpg",    pos: "50% 60%", kb: "in" },     // In a world...
   2:  { photo: "02-villain.jpg",       pos: "40% 45%", kb: "in" },     // fake CEO email
   3:  { photo: "02-villain.jpg",       pos: "40% 45%", kb: "in" },     // ...emails lie (same shot keeps moving)
-  4:  { photo: "03-desk-rain.jpg",     pos: "62% 35%", kb: "right", o: 0.9 }, // Malabe, 2:47 AM
+  4:  { photo: "03-desk-rain.jpg",     pos: "62% 35%", kb: "right", o: 0.9 }, // Colombo, 2:47 AM
   5:  { photo: "01-email-wall.jpg",    pos: "50% 65%", kb: "out" },    // ...one man...
   6:  { photo: "04-tea-sip.jpg",       pos: "55% 50%", kb: "in", o: 0.9 },    // slow-motion tea
   7:  { photo: "05-close-up.jpg",      pos: "55% 45%", kb: "in", o: 0.9 },    // They spoofed the wrong domain
@@ -266,6 +266,16 @@ const SCENE_PHOTOS = {
   28: { photo: "11-poster.jpg",        pos: "50% 40%", kb: "out", o: 0.5 },   // title card
 };
 Object.entries(SCENE_PHOTOS).forEach(([i, p]) => Object.assign(scenes[i], p));
+
+// ---------- The 1-minute cut: shorter scenes, and some scenes removed ----------
+// (scene numbers are the ORIGINAL positions in the list above)
+const DURATIONS = { 1: 3000, 2: 2600, 4: 3000, 5: 3000, 6: 2800, 7: 2600, 8: 3200, 9: 2600,
+  11: 1800, 12: 1800, 13: 2400, 14: 5000, 18: 2600, 20: 2200, 21: 2800, 22: 2000, 23: 3800, 24: 3600, 27: 3000 };
+Object.entries(DURATIONS).forEach(([i, d]) => (scenes[i].d = d));
+scenes[1].sound = () => { noise(2, 0.15, 300); boom(); };              // kettle hiss moves to the first scene
+scenes[24].html = N("This winter…<br>he's patching…<br><b>the soul of the internet.</b>");  // two lines merged into one
+const CUT = [0, 3, 10, 15, 16, 17, 19, 25, 26];                        // scenes left out of the 1-minute version
+CUT.sort((a, b) => b - a).forEach((i) => scenes.splice(i, 1));
 
 // =====================================================
 //  The player
@@ -309,7 +319,7 @@ function sceneHTML(s) {
   if (s.type === "dns") return `<div class="terminal"><div class="dots"><i style="background:#ef4444"></i><i style="background:#f59e0b"></i><i style="background:#22c55e"></i></div>
       <span class="prompt">_dmarc.yourcompany.com TXT</span><br><span class="k">v=DMARC1;</span> <span class="k">p=</span><span class="v" id="policy">none</span><span class="caret"></span></div>`;
   if (s.type === "montage") return `<div class="montage">${["⌨️ Fingers flying", "🛡️ Intune policies deployed", "🔐 MFA prompts everywhere", "🔥 Firewall rule saves the day", "🍵 Kettle on. Again."]
-      .map((t, i) => `<div style="animation-delay:${i * 0.9}s">${t}</div>`).join("")}</div>`;
+      .map((t, i) => `<div style="animation-delay:${i * 0.65}s">${t}</div>`).join("")}</div>`;
   if (s.type === "title") return `<div class="title-card"><div class="big">DMARC: REJECT</div>
       <p class="tagline">No spoofing. No mercy. No milk shortage.</p>
       <div class="credits">Starring <strong>Isuru</strong> as <em>The Engineer</em><br>
@@ -323,10 +333,10 @@ function sceneHTML(s) {
 // The DNS scene: delete "none" letter by letter, then type "reject"
 async function playDNS(id) {
   const el = document.getElementById("policy");
-  await wait(1500, id);
-  for (let i = 4; i >= 0; i--) { if (id !== runId) return; el.textContent = "none".slice(0, i); tick(); await wait(260, id); }
-  await wait(600, id);
-  for (const ch of "reject") { if (id !== runId) return; el.textContent += ch; tick(); await wait(220, id); }
+  await wait(800, id);
+  for (let i = 4; i >= 0; i--) { if (id !== runId) return; el.textContent = "none".slice(0, i); tick(); await wait(200, id); }
+  await wait(350, id);
+  for (const ch of "reject") { if (id !== runId) return; el.textContent += ch; tick(); await wait(160, id); }
   await wait(500, id);
   if (id !== runId) return;
   boom(35, 3); noise(2, 0.6, 500);
@@ -358,7 +368,7 @@ async function play(startAt = 0) {
     if (s.type === "title") return;            // stay on the final card
     if (!(await wait(s.d, id))) return;        // stopped (replay / skip)
     el.classList.add("out");
-    if (!(await wait(s.silence ? 1400 : 650, id))) return;
+    if (!(await wait(s.silence ? 1000 : 450, id))) return;
     el.remove();
   }
 }
